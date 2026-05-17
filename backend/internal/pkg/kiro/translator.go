@@ -259,14 +259,6 @@ func normalizeModelAlias(model string) string {
 	}
 }
 
-func BuildKiroPayload(claudeBody []byte, modelID, profileArn, origin string, headers http.Header) ([]byte, error) {
-	result, err := BuildKiroPayloadWithContext(claudeBody, modelID, profileArn, origin, headers)
-	if err != nil {
-		return nil, err
-	}
-	return result.Payload, nil
-}
-
 func BuildKiroPayloadWithContext(claudeBody []byte, modelID, profileArn, origin string, headers http.Header) (*KiroBuildResult, error) {
 	const kiroMaxOutputTokens = 32000
 	requestCtx := KiroRequestContext{ToolNameMap: map[string]string{}}
@@ -364,10 +356,6 @@ func BuildKiroPayloadWithContext(claudeBody []byte, modelID, profileArn, origin 
 	return &KiroBuildResult{Payload: payloadBytes, Context: requestCtx}, nil
 }
 
-func ParseNonStreamingEventStream(body io.Reader, model string) (*ParseResult, error) {
-	return ParseNonStreamingEventStreamWithContext(body, model, KiroRequestContext{})
-}
-
 func ParseNonStreamingEventStreamWithContext(body io.Reader, model string, requestCtx KiroRequestContext) (*ParseResult, error) {
 	content, toolUses, usage, stopReason, err := parseEventStream(body)
 	if err != nil {
@@ -381,10 +369,6 @@ func ParseNonStreamingEventStreamWithContext(body io.Reader, model string, reque
 		Usage:        usage,
 		StopReason:   stopReason,
 	}, nil
-}
-
-func StreamEventStreamAsAnthropic(ctx context.Context, body io.Reader, w io.Writer, model string, inputTokens int) (*StreamResult, error) {
-	return StreamEventStreamAsAnthropicWithContext(ctx, body, w, model, inputTokens, KiroRequestContext{})
 }
 
 func StreamEventStreamAsAnthropicWithContext(ctx context.Context, body io.Reader, w io.Writer, model string, inputTokens int, requestCtx KiroRequestContext) (*StreamResult, error) {
@@ -404,7 +388,6 @@ func StreamEventStreamAsAnthropicWithContext(ctx context.Context, body io.Reader
 	streamingToolStopped := make(map[string]bool)
 	currentStreamingToolID := ""
 	pendingAssistantText := ""
-	seenAssistantText := ""
 	lastContentFragment := ""
 	pendingLeadingWhitespace := ""
 	stopReason := ""
@@ -865,16 +848,14 @@ func StreamEventStreamAsAnthropicWithContext(ctx context.Context, body io.Reader
 			if evt.Content == "" {
 				return nil
 			}
-			deltaText, newSeen := computeKiroTextDelta(seenAssistantText, evt.Content)
-			seenAssistantText = newSeen
 			lastContentFragment = evt.Content
-			if evt.IsDuplicateContent || deltaText == "" {
+			if evt.IsDuplicateContent {
 				return nil
 			}
 			if requestCtx.ThinkingEnabled {
-				return processThinkingTaggedText(deltaText)
+				return processThinkingTaggedText(evt.Content)
 			}
-			pendingAssistantText += deltaText
+			pendingAssistantText += evt.Content
 			return flushPendingAssistantText()
 		case kiroSemanticReasoning:
 			if evt.Reasoning == "" || !requestCtx.ThinkingEnabled {
@@ -2670,20 +2651,6 @@ func deduplicateToolUses(toolUses []KiroToolUse) []KiroToolUse {
 		out = append(out, tool)
 	}
 	return out
-}
-
-func computeKiroTextDelta(seen, incoming string) (delta, newSeen string) {
-	incoming = strings.TrimSuffix(incoming, "\u0000")
-	if incoming == "" {
-		return "", seen
-	}
-	if strings.HasPrefix(incoming, seen) {
-		return strings.TrimPrefix(incoming, seen), incoming
-	}
-	if strings.HasPrefix(seen, incoming) {
-		return "", seen
-	}
-	return incoming, seen + incoming
 }
 
 func toolUseContentKey(tool KiroToolUse) string {
