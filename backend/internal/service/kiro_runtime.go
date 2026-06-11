@@ -688,7 +688,11 @@ func (s *GatewayService) handleKiroHTTPError(ctx context.Context, resp *http.Res
 			Kind:               "failover",
 			Message:            upstreamMsg,
 		})
-		if s.rateLimitService != nil {
+		// 429 已经被 executeKiroUpstreamWithParsed → markKiro429 完整处理（Redis 1-5min
+		// 指数退避 + DB rate_limit_reset_at 同步）。这里再走 HandleUpstreamError 会进入
+		// handle429 → apply429FallbackRateLimit，把 DB cooldown 反写成 5s flat，
+		// 直接抹掉我们刚算好的退避时长。所以 429 跳过通用 handler。
+		if s.rateLimitService != nil && resp.StatusCode != http.StatusTooManyRequests {
 			s.rateLimitService.HandleUpstreamError(ctx, account, resp.StatusCode, resp.Header, respBody)
 		}
 		return &UpstreamFailoverError{
