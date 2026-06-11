@@ -232,6 +232,7 @@ type CreateGroupInput struct {
 	RPMLimit int
 	// Kiro 模拟缓存配置（仅 kiro 分组生效）
 	KiroCacheEmulationEnabled bool
+	KiroAutoStickyEnabled     *bool
 	KiroCacheEmulationRatio   *float64
 	// 从指定分组复制账号（创建分组后在同一事务内绑定）
 	CopyAccountsFromGroupIDs []int64
@@ -276,6 +277,7 @@ type UpdateGroupInput struct {
 	RPMLimit *int
 	// Kiro 模拟缓存配置（仅 kiro 分组生效）
 	KiroCacheEmulationEnabled *bool
+	KiroAutoStickyEnabled     *bool
 	KiroCacheEmulationRatio   *float64
 	// 从指定分组复制账号（同步操作：先清空当前分组的账号绑定，再绑定源分组的账号）
 	CopyAccountsFromGroupIDs []int64
@@ -1850,6 +1852,11 @@ func (s *adminServiceImpl) CreateGroup(ctx context.Context, input *CreateGroupIn
 		mcpXMLInject = *input.MCPXMLInject
 	}
 
+	kiroAutoStickyEnabled := platform == PlatformKiro
+	if input.KiroAutoStickyEnabled != nil {
+		kiroAutoStickyEnabled = *input.KiroAutoStickyEnabled
+	}
+
 	// 如果指定了复制账号的源分组，先获取账号 ID 列表
 	var accountIDsToCopy []int64
 	if len(input.CopyAccountsFromGroupIDs) > 0 {
@@ -1913,6 +1920,7 @@ func (s *adminServiceImpl) CreateGroup(ctx context.Context, input *CreateGroupIn
 		ModelsListConfig:                normalizeGroupModelsListConfig(input.ModelsListConfig),
 		RPMLimit:                        input.RPMLimit,
 		KiroCacheEmulationEnabled:       input.KiroCacheEmulationEnabled,
+		KiroAutoStickyEnabled:           kiroAutoStickyEnabled,
 	}
 	if input.KiroCacheEmulationRatio != nil {
 		group.KiroCacheEmulationRatio = *input.KiroCacheEmulationRatio
@@ -2171,6 +2179,9 @@ func (s *adminServiceImpl) UpdateGroup(ctx context.Context, id int64, input *Upd
 	}
 	if input.KiroCacheEmulationEnabled != nil {
 		group.KiroCacheEmulationEnabled = *input.KiroCacheEmulationEnabled
+	}
+	if input.KiroAutoStickyEnabled != nil {
+		group.KiroAutoStickyEnabled = *input.KiroAutoStickyEnabled
 	}
 	if input.KiroCacheEmulationRatio != nil {
 		group.KiroCacheEmulationRatio = *input.KiroCacheEmulationRatio

@@ -88,6 +88,8 @@ const (
 	FieldRpmLimit = "rpm_limit"
 	// FieldKiroCacheEmulationEnabled holds the string denoting the kiro_cache_emulation_enabled field in the database.
 	FieldKiroCacheEmulationEnabled = "kiro_cache_emulation_enabled"
+	// FieldKiroAutoStickyEnabled holds the string denoting the kiro_auto_sticky_enabled field in the database.
+	FieldKiroAutoStickyEnabled = "kiro_auto_sticky_enabled"
 	// FieldKiroCacheEmulationRatio holds the string denoting the kiro_cache_emulation_ratio field in the database.
 	FieldKiroCacheEmulationRatio = "kiro_cache_emulation_ratio"
 	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
@@ -201,6 +203,7 @@ var Columns = []string{
 	FieldModelsListConfig,
 	FieldRpmLimit,
 	FieldKiroCacheEmulationEnabled,
+	FieldKiroAutoStickyEnabled,
 	FieldKiroCacheEmulationRatio,
 }
 
@@ -291,6 +294,8 @@ var (
 	DefaultRpmLimit int
 	// DefaultKiroCacheEmulationEnabled holds the default value on creation for the "kiro_cache_emulation_enabled" field.
 	DefaultKiroCacheEmulationEnabled bool
+	// DefaultKiroAutoStickyEnabled holds the default value on creation for the "kiro_auto_sticky_enabled" field.
+	DefaultKiroAutoStickyEnabled bool
 	// DefaultKiroCacheEmulationRatio holds the default value on creation for the "kiro_cache_emulation_ratio" field.
 	DefaultKiroCacheEmulationRatio float64
 )
@@ -461,6 +466,11 @@ func ByRpmLimit(opts ...sql.OrderTermOption) OrderOption {
 // ByKiroCacheEmulationEnabled orders the results by the kiro_cache_emulation_enabled field.
 func ByKiroCacheEmulationEnabled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldKiroCacheEmulationEnabled, opts...).ToFunc()
+}
+
+// ByKiroAutoStickyEnabled orders the results by the kiro_auto_sticky_enabled field.
+func ByKiroAutoStickyEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKiroAutoStickyEnabled, opts...).ToFunc()
 }
 
 // ByKiroCacheEmulationRatio orders the results by the kiro_cache_emulation_ratio field.

@@ -70,6 +70,7 @@ type Group struct {
 
 	// Kiro 模拟缓存配置（仅 Kiro 平台生效）。
 	KiroCacheEmulationEnabled bool
+	KiroAutoStickyEnabled     bool
 	KiroCacheEmulationRatio   float64
 
 	CreatedAt time.Time
@@ -83,6 +84,10 @@ type Group struct {
 
 func (g *Group) EffectiveKiroCacheEmulationEnabled() bool {
 	return g != nil && g.Platform == PlatformKiro && g.KiroCacheEmulationEnabled && g.EffectiveKiroCacheEmulationRatio() > 0
+}
+
+func (g *Group) EffectiveKiroAutoStickyEnabled() bool {
+	return g != nil && g.Platform == PlatformKiro && g.KiroAutoStickyEnabled
 }
 
 func (g *Group) EffectiveKiroCacheEmulationRatio() float64 {
@@ -110,6 +115,7 @@ func normalizeKiroCacheEmulationFields(g *Group) {
 		return
 	}
 	if g.Platform != PlatformKiro {
+		g.KiroAutoStickyEnabled = false
 		g.KiroCacheEmulationEnabled = false
 		g.KiroCacheEmulationRatio = 0
 		return

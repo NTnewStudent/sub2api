@@ -169,6 +169,9 @@ func (Group) Fields() []ent.Field {
 		field.Bool("kiro_cache_emulation_enabled").
 			Default(false).
 			Comment("是否启用 Kiro 模拟缓存（仅 kiro 分组生效）"),
+		field.Bool("kiro_auto_sticky_enabled").
+			Default(true).
+			Comment("是否启用 Kiro 自动会话粘性路由（仅 kiro 分组生效）"),
 		field.Float("kiro_cache_emulation_ratio").
 			SchemaType(map[string]string{dialect.Postgres: "decimal(5,4)"}).
 			Default(1.0).

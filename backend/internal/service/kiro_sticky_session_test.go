@@ -10,7 +10,7 @@ import (
 
 // kiroGroup 返回一个 Kiro 平台分组，用于 sticky session 测试。
 func kiroGroup() *Group {
-	return &Group{Platform: PlatformKiro}
+	return &Group{Platform: PlatformKiro, KiroAutoStickyEnabled: true}
 }
 
 // nonKiroGroup 返回一个 Anthropic 平台分组，用于对比测试。
@@ -221,6 +221,31 @@ func TestKiroStickySession_EmptySystemPromptUsesFirstUserMessage(t *testing.T) {
 }
 
 // TestIsKiroGroup 验证 isKiroGroup 辅助函数。
+func TestKiroStickySession_DisabledSkipsAutoInference(t *testing.T) {
+	svc := &GatewayService{}
+	body := newKiroRequestBody("stable system prompt", 1)
+	ref := NewRequestBodyRef(body)
+	parsed, err := ParseGatewayRequest(ref, "anthropic")
+	require.NoError(t, err)
+	parsed.Group = &Group{Platform: PlatformKiro, KiroAutoStickyEnabled: false}
+	parsed.SessionContext = &SessionContext{APIKeyID: 42}
+
+	require.Empty(t, svc.GenerateSessionHash(parsed))
+}
+
+func TestKiroStickySession_ExplicitSessionIDWorksWhenAutoInferenceDisabled(t *testing.T) {
+	svc := &GatewayService{}
+	body := newKiroRequestBody("stable system prompt", 1)
+	ref := NewRequestBodyRef(body)
+	parsed, err := ParseGatewayRequest(ref, "anthropic")
+	require.NoError(t, err)
+	parsed.Group = &Group{Platform: PlatformKiro, KiroAutoStickyEnabled: false}
+	parsed.SessionContext = &SessionContext{APIKeyID: 42}
+	parsed.ExplicitSessionID = "manual-session"
+
+	require.NotEmpty(t, svc.GenerateSessionHash(parsed))
+}
+
 func TestIsKiroGroup(t *testing.T) {
 	require.True(t, isKiroGroup(&Group{Platform: PlatformKiro}))
 	require.False(t, isKiroGroup(&Group{Platform: PlatformAnthropic}))

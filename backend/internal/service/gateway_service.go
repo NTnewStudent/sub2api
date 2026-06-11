@@ -794,6 +794,12 @@ func (s *GatewayService) GenerateSessionHash(parsed *ParsedRequest) string {
 	// 消息。它们在同一对话后续轮次中通常保持不变，而完整 messages 会每轮追加导致 hash
 	// 变化。混入 APIKeyID 后，可以让同一个 API Key 下的同一对话固定路由到同一账号。
 	if isKiroGroup(parsed.Group) {
+		if !parsed.Group.EffectiveKiroAutoStickyEnabled() {
+			slog.Info("sticky.hash_source",
+				"source", "kiro_auto_sticky_disabled",
+			)
+			return ""
+		}
 		stableSeed := extractTextFromSystemRaw(parsed.SystemRaw())
 		source := "kiro_system_prompt"
 		if stableSeed == "" {
@@ -815,6 +821,7 @@ func (s *GatewayService) GenerateSessionHash(parsed *ParsedRequest) string {
 			)
 			return hash
 		}
+		return ""
 	}
 
 	// 3. 最后 fallback: 使用 session上下文 + system + 所有消息的完整摘要串

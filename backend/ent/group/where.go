@@ -215,6 +215,11 @@ func KiroCacheEmulationEnabled(v bool) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldKiroCacheEmulationEnabled, v))
 }
 
+// KiroAutoStickyEnabled applies equality check predicate on the "kiro_auto_sticky_enabled" field. It's identical to KiroAutoStickyEnabledEQ.
+func KiroAutoStickyEnabled(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldKiroAutoStickyEnabled, v))
+}
+
 // KiroCacheEmulationRatio applies equality check predicate on the "kiro_cache_emulation_ratio" field. It's identical to KiroCacheEmulationRatioEQ.
 func KiroCacheEmulationRatio(v float64) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldKiroCacheEmulationRatio, v))
@@ -1458,6 +1463,16 @@ func KiroCacheEmulationEnabledEQ(v bool) predicate.Group {
 // KiroCacheEmulationEnabledNEQ applies the NEQ predicate on the "kiro_cache_emulation_enabled" field.
 func KiroCacheEmulationEnabledNEQ(v bool) predicate.Group {
 	return predicate.Group(sql.FieldNEQ(FieldKiroCacheEmulationEnabled, v))
+}
+
+// KiroAutoStickyEnabledEQ applies the EQ predicate on the "kiro_auto_sticky_enabled" field.
+func KiroAutoStickyEnabledEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldKiroAutoStickyEnabled, v))
+}
+
+// KiroAutoStickyEnabledNEQ applies the NEQ predicate on the "kiro_auto_sticky_enabled" field.
+func KiroAutoStickyEnabledNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldKiroAutoStickyEnabled, v))
 }
 
 // KiroCacheEmulationRatioEQ applies the EQ predicate on the "kiro_cache_emulation_ratio" field.

@@ -509,6 +509,20 @@ func (_c *GroupCreate) SetNillableKiroCacheEmulationEnabled(v *bool) *GroupCreat
 	return _c
 }
 
+// SetKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field.
+func (_c *GroupCreate) SetKiroAutoStickyEnabled(v bool) *GroupCreate {
+	_c.mutation.SetKiroAutoStickyEnabled(v)
+	return _c
+}
+
+// SetNillableKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableKiroAutoStickyEnabled(v *bool) *GroupCreate {
+	if v != nil {
+		_c.SetKiroAutoStickyEnabled(*v)
+	}
+	return _c
+}
+
 // SetKiroCacheEmulationRatio sets the "kiro_cache_emulation_ratio" field.
 func (_c *GroupCreate) SetKiroCacheEmulationRatio(v float64) *GroupCreate {
 	_c.mutation.SetKiroCacheEmulationRatio(v)
@@ -752,6 +766,10 @@ func (_c *GroupCreate) defaults() error {
 		v := group.DefaultKiroCacheEmulationEnabled
 		_c.mutation.SetKiroCacheEmulationEnabled(v)
 	}
+	if _, ok := _c.mutation.KiroAutoStickyEnabled(); !ok {
+		v := group.DefaultKiroAutoStickyEnabled
+		_c.mutation.SetKiroAutoStickyEnabled(v)
+	}
 	if _, ok := _c.mutation.KiroCacheEmulationRatio(); !ok {
 		v := group.DefaultKiroCacheEmulationRatio
 		_c.mutation.SetKiroCacheEmulationRatio(v)
@@ -860,6 +878,9 @@ func (_c *GroupCreate) check() error {
 	}
 	if _, ok := _c.mutation.KiroCacheEmulationEnabled(); !ok {
 		return &ValidationError{Name: "kiro_cache_emulation_enabled", err: errors.New(`ent: missing required field "Group.kiro_cache_emulation_enabled"`)}
+	}
+	if _, ok := _c.mutation.KiroAutoStickyEnabled(); !ok {
+		return &ValidationError{Name: "kiro_auto_sticky_enabled", err: errors.New(`ent: missing required field "Group.kiro_auto_sticky_enabled"`)}
 	}
 	if _, ok := _c.mutation.KiroCacheEmulationRatio(); !ok {
 		return &ValidationError{Name: "kiro_cache_emulation_ratio", err: errors.New(`ent: missing required field "Group.kiro_cache_emulation_ratio"`)}
@@ -1034,6 +1055,10 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.KiroCacheEmulationEnabled(); ok {
 		_spec.SetField(group.FieldKiroCacheEmulationEnabled, field.TypeBool, value)
 		_node.KiroCacheEmulationEnabled = value
+	}
+	if value, ok := _c.mutation.KiroAutoStickyEnabled(); ok {
+		_spec.SetField(group.FieldKiroAutoStickyEnabled, field.TypeBool, value)
+		_node.KiroAutoStickyEnabled = value
 	}
 	if value, ok := _c.mutation.KiroCacheEmulationRatio(); ok {
 		_spec.SetField(group.FieldKiroCacheEmulationRatio, field.TypeFloat64, value)
@@ -1759,6 +1784,18 @@ func (u *GroupUpsert) UpdateKiroCacheEmulationEnabled() *GroupUpsert {
 	return u
 }
 
+// SetKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field.
+func (u *GroupUpsert) SetKiroAutoStickyEnabled(v bool) *GroupUpsert {
+	u.Set(group.FieldKiroAutoStickyEnabled, v)
+	return u
+}
+
+// UpdateKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field to the value that was provided on create.
+func (u *GroupUpsert) UpdateKiroAutoStickyEnabled() *GroupUpsert {
+	u.SetExcluded(group.FieldKiroAutoStickyEnabled)
+	return u
+}
+
 // SetKiroCacheEmulationRatio sets the "kiro_cache_emulation_ratio" field.
 func (u *GroupUpsert) SetKiroCacheEmulationRatio(v float64) *GroupUpsert {
 	u.Set(group.FieldKiroCacheEmulationRatio, v)
@@ -2477,6 +2514,20 @@ func (u *GroupUpsertOne) SetKiroCacheEmulationEnabled(v bool) *GroupUpsertOne {
 func (u *GroupUpsertOne) UpdateKiroCacheEmulationEnabled() *GroupUpsertOne {
 	return u.Update(func(s *GroupUpsert) {
 		s.UpdateKiroCacheEmulationEnabled()
+	})
+}
+
+// SetKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field.
+func (u *GroupUpsertOne) SetKiroAutoStickyEnabled(v bool) *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetKiroAutoStickyEnabled(v)
+	})
+}
+
+// UpdateKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field to the value that was provided on create.
+func (u *GroupUpsertOne) UpdateKiroAutoStickyEnabled() *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateKiroAutoStickyEnabled()
 	})
 }
 
@@ -3367,6 +3418,20 @@ func (u *GroupUpsertBulk) SetKiroCacheEmulationEnabled(v bool) *GroupUpsertBulk 
 func (u *GroupUpsertBulk) UpdateKiroCacheEmulationEnabled() *GroupUpsertBulk {
 	return u.Update(func(s *GroupUpsert) {
 		s.UpdateKiroCacheEmulationEnabled()
+	})
+}
+
+// SetKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field.
+func (u *GroupUpsertBulk) SetKiroAutoStickyEnabled(v bool) *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetKiroAutoStickyEnabled(v)
+	})
+}
+
+// UpdateKiroAutoStickyEnabled sets the "kiro_auto_sticky_enabled" field to the value that was provided on create.
+func (u *GroupUpsertBulk) UpdateKiroAutoStickyEnabled() *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateKiroAutoStickyEnabled()
 	})
 }
 

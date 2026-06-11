@@ -2241,8 +2241,8 @@ export default {
         enabled: 'Enable cache emulation',
         ratio: 'Cache ratio',
         ratioHint: '0 to 1. For example, 0.5 applies half of the simulated cache tokens.',
-        stickyRouting: 'Kiro Account Sticky Routing',
-        stickyRoutingHint: 'This group has Kiro sticky routing enabled automatically: multi-turn conversations are pinned to the same account to maximize Kiro prompt cache hit rate. Pass X-Session-ID in the request header to explicitly bind a session; without it, the system derives a stable key from the system prompt.'
+        stickyRouting: 'Enable Kiro account sticky routing',
+        stickyRoutingHint: 'When enabled, multi-turn conversations are pinned to the same account when possible. X-Session-ID still takes precedence for explicit session binding.'
       },
       imagePricing: {
         title: 'Image Generation Pricing',
